@@ -1534,7 +1534,9 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener, 
 		buffer.append(HIDDEN_DIV_START);
 
 		// add an empty textfield (otherwise IE doesn't work)
-		buffer.append("<input type=\"text\" autocomplete=\"false\"/>");
+		// ARENA
+        buffer.append("<input type=\"text\"/>");
+		// buffer.append("<input type=\"text\" autocomplete=\"false\"/>");
 
 		// add the submitting component
 		final Component submittingComponent = (Component)defaultSubmittingComponent;

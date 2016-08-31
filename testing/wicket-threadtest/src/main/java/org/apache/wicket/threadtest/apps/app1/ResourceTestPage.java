@@ -37,9 +37,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.time.Time;
-
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import javax.imageio.ImageIO;
 
 /**
  * Web page with 50 dynamically-created image resources.
@@ -76,15 +74,15 @@ public class ResourceTestPage extends WebPage
 
 				// Write it into a byte array as a JPEG.
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
 				try
 				{
-					encoder.encode(image);
+					ImageIO.write(image, "jpeg", baos);
 				}
 				catch (Exception e)
 				{
 					throw new WicketRuntimeException(e);
 				}
+
 				final byte[] imageData = baos.toByteArray();
 
 				item.add(new Image("image", new WebResource()

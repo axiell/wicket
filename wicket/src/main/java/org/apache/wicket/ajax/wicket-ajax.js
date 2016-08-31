@@ -148,7 +148,13 @@ Wicket.FunctionsExecuter.prototype = {
 		if (this.current < this.functions.length) {
 			var f = this.functions[this.current];
 			var run = function() {
-				f(this.notify.bind(this));
+				try {
+					f(this.notify.bind(this));
+				}
+				catch (e) {
+					Wicket.Log.error("Wicket.FunctionsExecuter.processNext: " + e);
+					this.notify();
+				}
 			}.bind(this);
 			this.current++;
 						
@@ -2117,7 +2123,7 @@ Wicket.ChangeHandler=function(elementId){
     var KEY_SHIFT=16;
     var KEY_CTRL=17;
     var KEY_ALT=18;
-    var KEY_END=46;
+    var KEY_END=35;
     var KEY_HOME=36;
     
 	var obj = Wicket.$(elementId);

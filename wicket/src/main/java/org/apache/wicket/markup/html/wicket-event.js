@@ -193,16 +193,25 @@ if (typeof(Wicket.Event) == "undefined") {
 					}
 					window.setTimeout(domCheck, 10);
 				} else if (document.readyState && Wicket.Browser.isIE()) { 
-					if (document.getElementById('ie_ready') == null) {
-						// for internet explorer we need to load a "dummy" scrip from ::/ to get the 
-						// readystatechangeevernt - that means the main page being loaded and now the browser
-						// is loading dependencies
-						var src = (window.location.protocol == 'https:') ? '\/\/:' : 'javascript:void(0)';
-						document.write('<script id="ie_ready" defer src="' + src + '"><\/script>');
-						document.getElementById('ie_ready').onreadystatechange = function() {
-							if (this.readyState == 'complete') domReady();
-						};
-					}
+					 /*if (document.getElementById('ie_ready') == null) {
+                     var src = (window.location.protocol == 'https:') ? '\/\/:' : 'javascript:void(0)';
+                     document.write('<script id="ie_ready" defer src="' + src + '"><\/script>');
+                     document.getElementById('ie_ready').onreadystatechange = function() {
+                     if (this.readyState == 'complete')
+                     domReady();
+                     };
+                     }*/
+
+                    //ARENA - BEGIN domready hack for IE
+                    var domCheck_ie = function () {
+                        if (document.readyState == "complete") {
+                            domReady();
+                        } else {
+                            window.setTimeout(domCheck_ie, 10);
+                        }
+                    };
+                    window.setTimeout(domCheck_ie, 10);
+                    //------ END domready hack for IE
 				} else { 
 					// other browsers
 					Wicket.Event.add(document, "DOMContentLoaded", domReady);

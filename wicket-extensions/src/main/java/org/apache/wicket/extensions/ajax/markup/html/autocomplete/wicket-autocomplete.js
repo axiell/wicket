@@ -88,6 +88,9 @@ Wicket.AutoComplete=function(elementId, callbackUrl, cfg, indicatorId){
         	
         var obj=wicketGet(elementId);
 
+        // ARENA
+        obj.setAttribute("autocomplete", "off");
+
         objonkeydown=obj.onkeydown;
         objonblur=obj.onblur;
         objonkeyup=obj.onkeyup;
@@ -169,6 +172,10 @@ Wicket.AutoComplete=function(elementId, callbackUrl, cfg, indicatorId){
                     } else if (Wicket.AutoCompleteSettings.enterHidesWithNoSelection) {
                         hideAutoComplete();
                         hidingAutocomplete = 1;
+                    }
+                    else {
+                        // ARENA
+                        hideAutoComplete();
                     }
                     mouseactive = 0;
                     if (typeof objonkeydown=="function") return objonkeydown.apply(this,[event]);
@@ -403,6 +410,12 @@ Wicket.AutoComplete=function(elementId, callbackUrl, cfg, indicatorId){
     function hideAutoComplete(){
         visible=0;
         setSelected(-1);
+        // ARENA
+        var entry=localThrottler.entries[getMenuId()];
+        if (typeof(entry) != "undefined") {
+            window.clearTimeout(entry.getTimeoutVar());
+        }
+        localThrottler.entries[getMenuId()]=undefined;
         mouseactive=0;
         var container = getAutocompleteContainer();
         if (container)

@@ -33,13 +33,12 @@ init${widgetId} = function() {
 	${additionalJavascript}
 };
 
+// ARENA (moved comments)
+// when a DatePicker is added via ajax, the loader is already finished, so we call the init function directly.
+// when page is rendered, all calendar components will be initialized after the required js libraries have been loaded.
 if (wicketCalendarInitFinished) {
-	// when a DatePicker is added via ajax, the loader is already finished, so
-	// we call the init function directly.
 	init${widgetId}();
 } else {
-	// when page is rendered, all calendar components will be initialized after
-	// the required js libraries have been loaded.
 	wicketCalendarInits.push(init${widgetId});
 }
 

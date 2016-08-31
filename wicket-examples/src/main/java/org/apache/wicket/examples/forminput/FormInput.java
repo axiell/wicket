@@ -64,7 +64,13 @@ public class FormInput extends WicketExamplePage
 	 */
 	private class InputForm extends Form<FormInputModel>
 	{
-		/**
+
+        @Override
+        protected void onBeforeRender() {
+            super.onBeforeRender();    //To change body of overridden methods use File | Settings | File Templates.
+        }
+
+        /**
 		 * Construct.
 		 * 
 		 * @param name

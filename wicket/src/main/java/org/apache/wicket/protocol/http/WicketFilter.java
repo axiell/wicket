@@ -675,8 +675,12 @@ public class WicketFilter implements Filter
 			// an init-param.
 			if (filterMapping == null)
 			{
-				InputStream is = filterConfig.getServletContext().getResourceAsStream(
-					"/WEB-INF/web.xml");
+                // ARENA
+                InputStream is = filterConfig.getServletContext().getResourceAsStream("/WEB-INF/liferay-web.xml");
+
+                if (is == null) {
+                    is = filterConfig.getServletContext().getResourceAsStream("/WEB-INF/web.xml");
+                }
 				if (is != null)
 				{
 					try

@@ -40,7 +40,7 @@ import javax.servlet.http.HttpSession;
  * Note: copied and adapted from the Apache Portal Bridges Common project
  * 
  * @author <a href="mailto:ate@douma.nu">Ate Douma</a>
- * @version $Id$
+ * @version $Id: ServletPortletSessionProxy.java 739543 2009-01-31 10:57:31Z ate $
  * 
  */
 public class ServletPortletSessionProxy implements InvocationHandler
