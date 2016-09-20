@@ -273,9 +273,10 @@
 		<url>http://wicketstuff.org/bamboo</url>
 	</ciManagement>
 	<scm>
-		<connection>scm:svn:http://svn.apache.org/repos/asf/wicket/trunk</connection>
-		<developerConnection>scm:svn:https://svn.apache.org/repos/asf/wicket/trunk</developerConnection>
-		<url>http://svn.apache.org/viewvc/wicket/trunk</url>
+		<connection>scm:git:git@github.com:axiell/wicket.git</connection>
+		<url>scm:git:git@github.com:axiell/wicket.git</url>
+		<developerConnection>scm:git:git@github.com:axiell/wicket.git</developerConnection>
+		<tag>${project.version}</tag>
 	</scm>
 	<mailingLists>
 		<mailingList>

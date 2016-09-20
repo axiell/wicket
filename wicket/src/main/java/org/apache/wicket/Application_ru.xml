@@ -51,4 +51,11 @@
 	
 	<entry key="org.apache.wicket.mfu.caption.unlimited">Файлы:</entry>
 	<entry key="org.apache.wicket.mfu.caption.limited">Файлы (всего не больше ${max}): </entry>
+
+	<entry key="PagingNavigator.first">Первая страница</entry>
+	<entry key="PagingNavigator.previous">предыдущая страница</entry>
+	<entry key="PagingNavigator.next">следующая страница</entry>
+	<entry key="PagingNavigator.last">На последней странице</entry>
+	<entry key="PagingNavigation.page">перейти на страницу ${page}</entry>
+
 </properties>
