@@ -86,6 +86,12 @@ import org.slf4j.LoggerFactory;
  */
 public class WicketFilter implements Filter
 {
+	// Arena Debug
+	public static final String ATTR_ARENA_DEBUG_LEVEL = "com.axiell.arena.debug.level";
+	public static final String ATTR_ARENA_DEBUG_URL = "com.axiell.arena.debug.url";
+	public static final int ARENA_DEBUG_LEVEL_WARN = 10;
+	public static final int ARENA_DEBUG_LEVEL_ERROR = 50;
+
 	/**
 	 * The name of the context parameter that specifies application factory class
 	 */
@@ -206,7 +212,7 @@ public class WicketFilter implements Filter
 
 
 	/**
-	 * As per {@link javax.servlet.Filter#doFilter}, is called by the container each time a
+	 * As per {@link Filter#doFilter}, is called by the container each time a
 	 * request/response pair is passed through the chain due to a client request for a resource at
 	 * the end of the chain. The FilterChain passed in to this method allows the Filter to pass on
 	 * the request and response to the next entity in the chain.
@@ -236,8 +242,8 @@ public class WicketFilter implements Filter
 	 * @see WicketFilterPortletContext
 	 * @see PortletServletRequestWrapper
 	 * @see PortletServletResponseWrapper
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
-	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
+	 * @see Filter#doFilter(ServletRequest,
+	 *      ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 		throws IOException, ServletException
@@ -245,6 +251,25 @@ public class WicketFilter implements Filter
 
 		HttpServletRequest httpServletRequest;
 		HttpServletResponse httpServletResponse;
+
+		// Arena Debug
+		Integer arenaDebugLevel = (Integer)request.getAttribute(ATTR_ARENA_DEBUG_LEVEL);
+		if (arenaDebugLevel == null) {
+			arenaDebugLevel = 0;
+			request.setAttribute(ATTR_ARENA_DEBUG_LEVEL, arenaDebugLevel);
+			request.setAttribute(ATTR_ARENA_DEBUG_URL, getRequestCompleteUrl((HttpServletRequest) request));
+		}
+		else {
+			arenaDebugLevel++;
+			request.setAttribute(ATTR_ARENA_DEBUG_LEVEL, arenaDebugLevel);
+		}
+		if (arenaDebugLevel > ARENA_DEBUG_LEVEL_WARN) {
+			String msg="arena debug level: " + arenaDebugLevel +" original url: " + request.getAttribute(ATTR_ARENA_DEBUG_URL)+ " url: " + getRequestCompleteUrl((HttpServletRequest) request);
+			log.error(msg);
+			if (arenaDebugLevel > ARENA_DEBUG_LEVEL_ERROR) {
+				throw new RuntimeException(msg);
+			}
+		}
 
 		boolean inPortletContext = false;
 		if (filterPortletContext != null)
@@ -371,6 +396,26 @@ public class WicketFilter implements Filter
 		}
 	}
 
+	// Arena Debug
+	private String getRequestCompleteUrl(final HttpServletRequest request) {
+		StringBuffer sb=new StringBuffer();
+		StringBuffer requestURL = request.getRequestURL();
+		if (requestURL!=null) {
+			sb.append(requestURL);
+
+		}
+		else {
+			String requestURI = request.getRequestURI();
+			if (requestURI!=null) {
+				sb.append(requestURI);
+			}
+		}
+		if (request.getQueryString() != null) {
+            sb.append("?").append(request.getQueryString());
+        }
+		return sb.toString();
+	}
+
 	/**
 	 * Handles servlet page requests, delegating to the wicket {@link RequestCycle} system.
 	 * 
@@ -380,7 +425,7 @@ public class WicketFilter implements Filter
 	 * <li>Otherwise begins the {@link RequestCycle} processing.
 	 * </ol>
 	 * 
-	 * @see RequestCycle
+	 * @see RequestCycle                                                                                                                             LP
 	 * @param servletRequest
 	 *            Servlet request object
 	 * @param servletResponse
@@ -631,7 +676,7 @@ public class WicketFilter implements Filter
 	}
 
 	/**
-	 * As per {@link javax.servlet.Filter#init(FilterConfig)}, is called by the web container to
+	 * As per {@link Filter#init(FilterConfig)}, is called by the web container to
 	 * indicate to a filter that it is being placed into service.
 	 * 
 	 * {@link WicketFilter#init(FilterConfig)} goes through a series of steps of steps to
@@ -648,7 +693,7 @@ public class WicketFilter implements Filter
 	 * {@link WicketFilterPortletContext}
 	 * </ol>
 	 * 
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig filterConfig) throws ServletException
 	{
