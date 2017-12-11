@@ -573,6 +573,7 @@
 				<inherited>false</inherited>
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
+				<version>1.10.b1</version>
 				<configuration>
 					<header>${basedir}/src/etc/apache-license-header.txt</header>
 					<failIfMissing>true</failIfMissing>
