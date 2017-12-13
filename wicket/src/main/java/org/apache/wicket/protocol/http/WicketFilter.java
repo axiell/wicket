@@ -643,7 +643,11 @@ public class WicketFilter implements Filter
 	{
 		String path = Strings.stripJSessionId(request.getRequestURI());
 		String contextPath = request.getContextPath();
-		path = path.substring(contextPath.length());
+		// Arena 4.0
+		int i = path.indexOf(contextPath);
+		if (i >= 0) {
+			path = path.substring(i+contextPath.length());
+		}
 		if (servletMode)
 		{
 			String servletPath = request.getServletPath();
