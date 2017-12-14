@@ -89,7 +89,7 @@ public class WicketFilter implements Filter
 	// Arena Debug
 	public static final String ATTR_ARENA_DEBUG_LEVEL = "com.axiell.arena.debug.level";
 	public static final String ATTR_ARENA_DEBUG_URL = "com.axiell.arena.debug.url";
-	public static final int ARENA_DEBUG_LEVEL_WARN = 10;
+	public static final int ARENA_DEBUG_LEVEL_WARN = 0;
 	public static final int ARENA_DEBUG_LEVEL_ERROR = 50;
 
 	/**
@@ -263,9 +263,9 @@ public class WicketFilter implements Filter
 			arenaDebugLevel++;
 			request.setAttribute(ATTR_ARENA_DEBUG_LEVEL, arenaDebugLevel);
 		}
-		if (arenaDebugLevel > ARENA_DEBUG_LEVEL_WARN) {
+		if (arenaDebugLevel >= ARENA_DEBUG_LEVEL_WARN) {
 			String msg="arena debug level: " + arenaDebugLevel +" original url: " + request.getAttribute(ATTR_ARENA_DEBUG_URL)+ " url: " + getRequestCompleteUrl((HttpServletRequest) request);
-			log.error(msg);
+			log.warn(msg);
 			if (arenaDebugLevel > ARENA_DEBUG_LEVEL_ERROR) {
 				throw new RuntimeException(msg);
 			}
