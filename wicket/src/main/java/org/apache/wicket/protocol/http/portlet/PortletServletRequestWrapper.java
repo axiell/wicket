@@ -98,12 +98,16 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper
 		{
 			requestURI = (String)request.getAttribute("javax.servlet.include.request_uri");
 			queryString = (String)request.getAttribute("javax.servlet.include.query_string");
+			// Arena 4.0
+			fixContextPath();
 		}
 		// else if request is a forward
 		else if ((contextPath = (String)request.getAttribute("javax.servlet.forward.context_path")) != null)
 		{
 			requestURI = (String)request.getAttribute("javax.servlet.forward.request_uri");
 			queryString = (String)request.getAttribute("javax.servlet.forward.query_string");
+			// Arena 4.0
+			fixContextPath();
 		}
 		// else it is a normal request
 		else
@@ -111,6 +115,16 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper
 			contextPath = request.getContextPath();
 			requestURI = request.getRequestURI();
 			queryString = request.getQueryString();
+		}
+	}
+
+	// Arena 4.0
+	private void fixContextPath() {
+		if (contextPath != null && requestURI != null) {
+			int idx = requestURI.indexOf(contextPath);
+			if (idx > 0) {
+				contextPath = requestURI.substring(0, idx) + contextPath;
+			}
 		}
 	}
 
