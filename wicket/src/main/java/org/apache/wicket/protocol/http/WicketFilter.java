@@ -86,11 +86,11 @@ import org.slf4j.LoggerFactory;
  */
 public class WicketFilter implements Filter
 {
-	// Arena Debug
-	public static final String ATTR_ARENA_DEBUG_LEVEL = "com.axiell.arena.debug.level";
-	public static final String ATTR_ARENA_DEBUG_URL = "com.axiell.arena.debug.url";
-	public static final int ARENA_DEBUG_LEVEL_WARN = 0;
-	public static final int ARENA_DEBUG_LEVEL_ERROR = 50;
+	// Arena Call level debug
+	public static final String ATTR_WICKET_CALL_DEPTH = "com.axiell.wicket.callDepth";
+	public static final String ATTR_WICKET_ORIGINAL_URL = "com.axiell.wicket.originalUrl";
+	public static final int ARENA_WICKET_CALL_DEPTH_WARN = 10;
+	public static final int ARENA_WICKET_CALL_DEPTH_ERROR = 50;
 
 	/**
 	 * The name of the context parameter that specifies application factory class
@@ -252,23 +252,26 @@ public class WicketFilter implements Filter
 		HttpServletRequest httpServletRequest;
 		HttpServletResponse httpServletResponse;
 
-		// Arena Debug
-		Integer arenaDebugLevel = (Integer)request.getAttribute(ATTR_ARENA_DEBUG_LEVEL);
-		if (arenaDebugLevel == null) {
-			arenaDebugLevel = 0;
-			request.setAttribute(ATTR_ARENA_DEBUG_LEVEL, arenaDebugLevel);
-			request.setAttribute(ATTR_ARENA_DEBUG_URL, getRequestCompleteUrl((HttpServletRequest) request));
+		// Arena
+		Integer wicketCallDepth = (Integer)request.getAttribute(ATTR_WICKET_CALL_DEPTH);
+		if (wicketCallDepth == null) {
+			wicketCallDepth = 0;
+			request.setAttribute(ATTR_WICKET_CALL_DEPTH, wicketCallDepth);
+			request.setAttribute(ATTR_WICKET_ORIGINAL_URL, getRequestCompleteUrl((HttpServletRequest) request));
 		}
 		else {
-			arenaDebugLevel++;
-			request.setAttribute(ATTR_ARENA_DEBUG_LEVEL, arenaDebugLevel);
+			wicketCallDepth++;
+			request.setAttribute(ATTR_WICKET_CALL_DEPTH, wicketCallDepth);
 		}
-		if (arenaDebugLevel >= ARENA_DEBUG_LEVEL_WARN) {
-			String msg="arena debug level: " + arenaDebugLevel +" original url: " + request.getAttribute(ATTR_ARENA_DEBUG_URL)+ " url: " + getRequestCompleteUrl((HttpServletRequest) request);
+		String msg="call depth: " + wicketCallDepth + " original url: " + request.getAttribute(ATTR_WICKET_ORIGINAL_URL)+ " url: " + getRequestCompleteUrl((HttpServletRequest) request);
+		if (wicketCallDepth >= ARENA_WICKET_CALL_DEPTH_WARN) {
 			log.warn(msg);
-			if (arenaDebugLevel > ARENA_DEBUG_LEVEL_ERROR) {
+			if (wicketCallDepth > ARENA_WICKET_CALL_DEPTH_ERROR) {
 				throw new RuntimeException(msg);
 			}
+		}
+		else {
+			log.debug(msg);
 		}
 
 		boolean inPortletContext = false;
