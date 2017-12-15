@@ -214,7 +214,7 @@ public class UrlResourceStream extends AbstractResourceStream
 			final Time time = Time.valueOf(Connections.getLastModified(url));
 
 			// if timestamp changed: update content length and last modified date
-			if (Objects.equal(time, lastModified) == false)
+			if (!Objects.equal(time, lastModified))
 			{
 				lastModified = time;
 				updateContentLength();
@@ -248,7 +248,7 @@ public class UrlResourceStream extends AbstractResourceStream
 	@Override
 	public String toString()
 	{
-		return url.toString();
+		return url==null ? null : url.toString();
 	}
 
 	/**
@@ -263,8 +263,7 @@ public class UrlResourceStream extends AbstractResourceStream
 	@Override
 	public long length()
 	{
-		long length = getData(true).contentLength;
-		return length;
+		return getData(true).contentLength;
 	}
 
 	public String locationAsString()
