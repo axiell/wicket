@@ -14,18 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+//Arena 4.0
 package org.apache.wicket.util.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.io.Connections;
+import org.apache.wicket.util.io.IOUtils;
+import org.apache.wicket.util.lang.Args;
+import org.apache.wicket.util.lang.Objects;
 import org.apache.wicket.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +37,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * UrlResourceStream implements IResource for URLs.
- * 
+ *
  * @see org.apache.wicket.util.resource.IResourceStream
  * @see org.apache.wicket.util.watch.IModifiable
  * @author Jonathan Locke
  * @author Igor Vaynberg
  */
 public class UrlResourceStream extends AbstractResourceStream
-	implements
+		implements
 		IFixedLocationResourceStream
 {
 	private static final long serialVersionUID = 1L;
@@ -48,117 +52,122 @@ public class UrlResourceStream extends AbstractResourceStream
 	/** Logging. */
 	private static final Logger log = LoggerFactory.getLogger(UrlResourceStream.class);
 
-	/** Resource stream. */
-	private transient InputStream inputStream;
+	/**
+	 * The meta data for this stream. Lazy loaded on demand.
+	 */
+	private transient StreamData streamData;
 
 	/** The URL to this resource. */
 	private final URL url;
 
-	/** the handle to the file if it is a file resource */
-	private File file;
-
-	/** Length of stream. */
-	private int contentLength;
-
-	/** Content type for stream. */
-	private String contentType;
-
 	/** Last known time the stream was last modified. */
-	private long lastModified;
+	private Time lastModified;
+
+	/**
+	 * Meta data class for the stream attributes
+	 */
+	private static class StreamData
+	{
+		private URLConnection connection;
+
+		/**
+		 * The streams read from this connection.
+		 * Some URLConnection implementations return the same instance of InputStream
+		 * every time URLConnection#getInputStream() is called. Other return a new instance
+		 * of InputStream.
+		 * Here we keep a list of all returned ones and close them in UrlResourceStream#close().
+		 * Even it is the same instance several times we will try to close it quietly several times.
+		 */
+		private List<InputStream> inputStreams;
+
+		/** Length of stream. */
+		private long contentLength;
+
+		/** Content type for stream. */
+		private String contentType;
+
+	}
 
 	/**
 	 * Construct.
-	 * 
+	 *
 	 * @param url
 	 *            URL of resource
 	 */
 	public UrlResourceStream(final URL url)
 	{
 		// save the url
-		this.url = url;
+		this.url = Args.notNull(url, "url");
+	}
 
-		// retrieve the content type and length
-		URLConnection connection = null;
-		try
+	/**
+	 * Lazy loads the stream settings on demand
+	 *
+	 * @param initialize
+	 *            a flag indicating whether to load the settings
+	 * @return the meta data with the stream settings
+	 */
+	private StreamData getData(boolean initialize)
+	{
+		if (streamData == null && initialize)
 		{
-			connection = url.openConnection();
-			contentLength = connection.getContentLength();
-			contentType = connection.getContentType();
-		}
-		catch (IOException ex)
-		{
-			throw new IllegalArgumentException("Invalid URL parameter " + url, ex);
-		}
-		finally
-		{
-			Connections.closeQuietly(connection);
-		}
+			streamData = new StreamData();
 
-		try
-		{
-			file = new File(new URI(url.toExternalForm()));
-
-			if (file != null && !file.exists())
+			try
 			{
-				file = null;
+				streamData.connection = url.openConnection();
+				streamData.contentLength = streamData.connection.getContentLength();
+				lastModified = Time.valueOf(streamData.connection.getLastModified());
+				streamData.contentType = streamData.connection.getContentType();
+
+				if (streamData.contentType == null || streamData.contentType.contains("unknown"))
+				{
+					Application application = Application.get();
+					if (application instanceof WebApplication)
+					{
+						// TODO Post 1.2: General: For non webapplication another method
+						// should be implemented (getMimeType on application?)
+						streamData.contentType = ((WebApplication)application).getServletContext().getMimeType(
+								url.getFile());
+						if (streamData.contentType == null)
+						{
+							streamData.contentType = URLConnection.getFileNameMap().getContentTypeFor(url.getFile());
+						}
+					}
+					else
+					{
+						streamData.contentType = URLConnection.getFileNameMap().getContentTypeFor(url.getFile());
+					}
+				}
+			}
+			catch (IOException ex)
+			{
+				throw new IllegalArgumentException("Invalid URL parameter " + url, ex);
 			}
 		}
-		catch (Exception e)
-		{
-			log.debug("cannot convert url: " + url + " to file (" + e.getMessage() +
-				"), falling back to the inputstream for polling");
-		}
 
+		return streamData;
 	}
 
 	/**
 	 * Closes this resource.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void close() throws IOException
 	{
-		if (inputStream != null)
-		{
-			inputStream.close();
-			inputStream = null;
-		}
-	}
+		StreamData data = getData(false);
 
-	/**
-	 * @return The content type of this resource, such as "image/jpeg" or "text/html"
-	 */
-	@Override
-	public String getContentType()
-	{
-		testContentType();
-		return contentType;
-	}
-
-	/**
-	 * Method to test the content type on null or unknown. if this is the case the content type is
-	 * tried to be resolved throw the servlet context
-	 */
-	private void testContentType()
-	{
-		if (contentType == null || contentType.indexOf("unknown") != -1)
+		if (data != null)
 		{
-			Application application = Application.get();
-			if (application instanceof WebApplication)
+			Connections.closeQuietly(data.connection);
+			if (data.inputStreams != null)
 			{
-				// TODO Post 1.2: General: For non webapplication another method
-				// should be implemented (getMimeType on application?)
-				contentType = ((WebApplication)application).getServletContext().getMimeType(
-					url.getFile());
-				if (contentType == null)
-				{
-					contentType = URLConnection.getFileNameMap().getContentTypeFor(url.getFile());
+				for (InputStream is : data.inputStreams) {
+					IOUtils.closeQuietly(is);
 				}
 			}
-			else
-			{
-				contentType = URLConnection.getFileNameMap().getContentTypeFor(url.getFile());
-			}
+			streamData = null;
 		}
 	}
 
@@ -168,20 +177,20 @@ public class UrlResourceStream extends AbstractResourceStream
 	 */
 	public InputStream getInputStream() throws ResourceStreamNotFoundException
 	{
-		if (inputStream == null)
+		try
 		{
-			try
-			{
-				inputStream = url.openStream();
+			StreamData data = getData(true);
+			InputStream is = data.connection.getInputStream();
+			if (data.inputStreams == null) {
+				data.inputStreams = new ArrayList<InputStream>();
 			}
-			catch (IOException e)
-			{
-				throw new ResourceStreamNotFoundException("Resource " + url +
-					" could not be opened", e);
-			}
+			data.inputStreams.add(is);
+			return is;
 		}
-
-		return inputStream;
+		catch (IOException e)
+		{
+			throw new ResourceStreamNotFoundException("Resource " + url + " could not be opened", e);
+		}
 	}
 
 	/**
@@ -199,64 +208,43 @@ public class UrlResourceStream extends AbstractResourceStream
 	@Override
 	public Time lastModifiedTime()
 	{
-		if (file != null)
+		try
 		{
-			// in case the file has been removed by now
-			if (file.exists() == false)
-			{
-				return null;
-			}
+			// get url modification timestamp
+			final Time time = Time.valueOf(Connections.getLastModified(url));
 
-			long lastModified = file.lastModified();
-
-			// if last modified changed update content length and last modified date
-			if (lastModified != this.lastModified)
+			// if timestamp changed: update content length and last modified date
+			if (Objects.equal(time, lastModified) == false)
 			{
-				this.lastModified = lastModified;
-				contentLength = (int)file.length();
+				lastModified = time;
+				updateContentLength();
 			}
+			return lastModified;
 		}
-		else
+		catch (IOException e)
 		{
-			try
-			{
-				long lastModified = Connections.getLastModified(url);
+			log.warn("getLastModified for " + url + " failed: " + e.getMessage());
 
-				// if last modified changed update content length and last modified date
-				if (lastModified != this.lastModified)
-				{
-					this.lastModified = lastModified;
-
-					URLConnection connection = url.openConnection();
-					contentLength = connection.getContentLength();
-					Connections.close(connection);
-				}
-			}
-			catch (IOException e)
-			{
-				if (url.toString().indexOf(".jar!") >= 0)
-				{
-					if (log.isDebugEnabled())
-					{
-						log.debug("getLastModified for " + url + " failed: " + e.getMessage());
-					}
-				}
-				else
-				{
-					log.warn("getLastModified for " + url + " failed: " + e.getMessage());
-				}
-
-				// allow modification watcher to detect the problem
-				return null;
-			}
-
+			// allow modification watcher to detect the problem
+			return null;
 		}
-		return Time.milliseconds(lastModified);
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
+	private void updateContentLength() throws IOException
+	{
+		StreamData data = getData(false);
+
+		if (data != null)
+		{
+			URLConnection connection = url.openConnection();
+			try {
+				data.contentLength = connection.getContentLength();
+			} finally {
+				Connections.close(connection);
+			}
+		}
+	}
+
 	@Override
 	public String toString()
 	{
@@ -264,17 +252,21 @@ public class UrlResourceStream extends AbstractResourceStream
 	}
 
 	/**
-	 * @see org.apache.wicket.util.resource.IResourceStream#length()
+	 * @return The content type of this resource, such as "image/jpeg" or "text/html"
 	 */
+	@Override
+	public String getContentType()
+	{
+		return getData(true).contentType;
+	}
+
 	@Override
 	public long length()
 	{
-		return contentLength;
+		long length = getData(true).contentLength;
+		return length;
 	}
 
-	/**
-	 * @see org.apache.wicket.util.resource.IFixedLocationResourceStream#locationAsString()
-	 */
 	public String locationAsString()
 	{
 		return url.toExternalForm();

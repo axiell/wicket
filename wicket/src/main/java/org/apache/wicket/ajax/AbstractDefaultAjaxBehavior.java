@@ -72,21 +72,26 @@ public abstract class AbstractDefaultAjaxBehavior extends AbstractAjaxBehavior
 		super.renderHead(response);
 
 		final IDebugSettings debugSettings = Application.get().getDebugSettings();
-
-		response.renderJavascriptReference(WicketEventReference.INSTANCE);
-		response.renderJavascriptReference(WicketAjaxReference.INSTANCE);
-
+		// Arena
+        RequestContext context = RequestContext.get();
+        if (!context.isPortletRequest()) {
+		    response.renderJavascriptReference(WicketEventReference.INSTANCE);
+		    response.renderJavascriptReference(WicketAjaxReference.INSTANCE);
+        }
 		if (debugSettings.isAjaxDebugModeEnabled())
 		{
 			response.renderJavascriptReference(JAVASCRIPT_DEBUG);
 			response.renderJavascript("wicketAjaxDebugEnable=true;", "wicket-ajax-debug-enable");
 		}
 
+        // ARENA
+        /*
 		RequestContext context = RequestContext.get();
 		if (context.isPortletRequest())
 		{
 			response.renderJavascript("Wicket.portlet=true", "wicket-ajax-portlet-flag");
 		}
+	    */
 	}
 
 	/**

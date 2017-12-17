@@ -23,6 +23,7 @@ import org.apache.wicket.RequestContext;
 import org.apache.wicket.Response;
 import org.apache.wicket.markup.html.internal.HeaderResponse;
 import org.apache.wicket.response.StringResponse;
+import org.apache.wicket.util.string.Strings;
 
 /**
  * Portlet behaviour override of the {@link HeaderResponse} implementation, responsible for writing
@@ -122,4 +123,20 @@ public class EmbeddedPortletHeaderResponse extends HeaderResponse
 	{
 		return bufferedResponse;
 	}
+
+
+    // ARENA
+    @Override
+    public void renderJavascriptReference(String url)
+    {
+        if (Strings.isEmpty(url))
+        {
+            throw new IllegalArgumentException("url cannot be empty or null");
+        }
+        // ARENA
+        if (url.endsWith("wicket-event.js") || url.endsWith("wicket-ajax.js") || url.endsWith("wicket-autocomplete.js") || url.endsWith("progressbar.js")|| url.endsWith("palette.js") || url.endsWith("modal.js")) {
+            return;
+        }
+        super.renderJavascriptReference(url);
+    }
 }

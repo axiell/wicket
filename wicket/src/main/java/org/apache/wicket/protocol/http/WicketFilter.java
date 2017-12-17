@@ -86,6 +86,12 @@ import org.slf4j.LoggerFactory;
  */
 public class WicketFilter implements Filter
 {
+	// Arena Call level debug
+	public static final String ATTR_WICKET_CALL_DEPTH = "com.axiell.wicket.callDepth";
+	public static final String ATTR_WICKET_ORIGINAL_URL = "com.axiell.wicket.originalUrl";
+	public static final int ARENA_WICKET_CALL_DEPTH_WARN = 10;
+	public static final int ARENA_WICKET_CALL_DEPTH_ERROR = 50;
+
 	/**
 	 * The name of the context parameter that specifies application factory class
 	 */
@@ -246,6 +252,28 @@ public class WicketFilter implements Filter
 		HttpServletRequest httpServletRequest;
 		HttpServletResponse httpServletResponse;
 
+		// Arena
+		Integer wicketCallDepth = (Integer)request.getAttribute(ATTR_WICKET_CALL_DEPTH);
+		if (wicketCallDepth == null) {
+			wicketCallDepth = 0;
+			request.setAttribute(ATTR_WICKET_CALL_DEPTH, wicketCallDepth);
+			request.setAttribute(ATTR_WICKET_ORIGINAL_URL, getRequestCompleteUrl((HttpServletRequest) request));
+		}
+		else {
+			wicketCallDepth++;
+			request.setAttribute(ATTR_WICKET_CALL_DEPTH, wicketCallDepth);
+		}
+		String msg="call depth: " + wicketCallDepth + " original url: " + request.getAttribute(ATTR_WICKET_ORIGINAL_URL)+ " url: " + getRequestCompleteUrl((HttpServletRequest) request);
+		if (wicketCallDepth >= ARENA_WICKET_CALL_DEPTH_WARN) {
+			log.warn(msg);
+			if (wicketCallDepth > ARENA_WICKET_CALL_DEPTH_ERROR) {
+				throw new RuntimeException(msg);
+			}
+		}
+		else {
+			log.debug(msg);
+		}
+
 		boolean inPortletContext = false;
 		if (filterPortletContext != null)
 		{
@@ -369,6 +397,26 @@ public class WicketFilter implements Filter
 			// request isn't for us
 			chain.doFilter(request, response);
 		}
+	}
+
+	// Arena Debug
+	private String getRequestCompleteUrl(final HttpServletRequest request) {
+		StringBuffer sb=new StringBuffer();
+		StringBuffer requestURL = request.getRequestURL();
+		if (requestURL!=null) {
+			sb.append(requestURL);
+
+		}
+		else {
+			String requestURI = request.getRequestURI();
+			if (requestURI!=null) {
+				sb.append(requestURI);
+			}
+		}
+		if (request.getQueryString() != null) {
+            sb.append("?").append(request.getQueryString());
+        }
+		return sb.toString();
 	}
 
 	/**
@@ -598,7 +646,11 @@ public class WicketFilter implements Filter
 	{
 		String path = Strings.stripJSessionId(request.getRequestURI());
 		String contextPath = request.getContextPath();
-		path = path.substring(contextPath.length());
+		// Arena 4.0
+		int i = path.indexOf(contextPath);
+		if (i >= 0) {
+			path = path.substring(i+contextPath.length());
+		}
 		if (servletMode)
 		{
 			String servletPath = request.getServletPath();
@@ -675,8 +727,12 @@ public class WicketFilter implements Filter
 			// an init-param.
 			if (filterMapping == null)
 			{
-				InputStream is = filterConfig.getServletContext().getResourceAsStream(
-					"/WEB-INF/web.xml");
+                // ARENA
+                InputStream is = filterConfig.getServletContext().getResourceAsStream("/WEB-INF/liferay-web.xml");
+
+                if (is == null) {
+                    is = filterConfig.getServletContext().getResourceAsStream("/WEB-INF/web.xml");
+                }
 				if (is != null)
 				{
 					try

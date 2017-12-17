@@ -16,7 +16,11 @@
  */
 package org.apache.wicket.protocol.http.portlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +38,7 @@ import javax.servlet.http.HttpSession;
  */
 public class PortletServletRequestWrapper extends HttpServletRequestWrapper
 {
+	private static final Logger log = LoggerFactory.getLogger(PortletServletRequestWrapper.class);
 	/**
 	 * Context path.
 	 */
@@ -58,6 +63,8 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper
 	 * HTTP session.
 	 */
 	private HttpSession session;
+
+	private Map parameterMap;
 
 	/**
 	 * Converts from a filterPath (path with a trailing slash), to a servletPath (path with a
@@ -98,19 +105,108 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper
 		{
 			requestURI = (String)request.getAttribute("javax.servlet.include.request_uri");
 			queryString = (String)request.getAttribute("javax.servlet.include.query_string");
+			// Arena 4.0
+			fixContextPath();
+			fixParameterMap(request);
 		}
 		// else if request is a forward
 		else if ((contextPath = (String)request.getAttribute("javax.servlet.forward.context_path")) != null)
 		{
 			requestURI = (String)request.getAttribute("javax.servlet.forward.request_uri");
 			queryString = (String)request.getAttribute("javax.servlet.forward.query_string");
+			// Arena 4.0
+			fixContextPath();
+			fixParameterMap(request);
 		}
 		// else it is a normal request
 		else
 		{
-			contextPath = request.getContextPath();
-			requestURI = request.getRequestURI();
-			queryString = request.getQueryString();
+			contextPath = super.getContextPath();
+			requestURI = super.getRequestURI();
+			queryString = super.getQueryString();
+			parameterMap = super.getParameterMap();
+		}
+	}
+
+	private static HttpServletRequest getOriginalRequest(final HttpServletRequest request) {
+		HttpServletRequest originalRequest = request;
+		while (originalRequest instanceof HttpServletRequestWrapper && ((HttpServletRequestWrapper) originalRequest).getRequest() != null) {
+			originalRequest = (HttpServletRequest) ((HttpServletRequestWrapper) originalRequest).getRequest();
+		}
+		return originalRequest;
+	}
+
+	// Arena 4.0
+	private void fixContextPath() {
+		if (contextPath != null && requestURI != null) {
+			int idx = requestURI.indexOf(contextPath);
+			if (idx > 0) {
+				contextPath = requestURI.substring(0, idx) + contextPath;
+			}
+		}
+	}
+
+	private static boolean isForm(final HttpServletRequest request) {
+		return "post".equalsIgnoreCase(request.getMethod()) && "application/x-www-form-urlencoded".equalsIgnoreCase(request.getContentType());
+	}
+
+	private void fixParameterMap(final HttpServletRequest request) {
+		if (isForm(request)) {
+			final HttpServletRequest originalRequest=getOriginalRequest(request);
+			Map parameterMap=new HashMap();
+			parameterMap.putAll(originalRequest.getParameterMap());
+			parameterMap.putAll(super.getParameterMap());
+			this.parameterMap=Collections.unmodifiableMap(parameterMap);
+		}
+		else {
+			parameterMap=super.getParameterMap();
+		}
+	}
+
+	@Override
+	public Map getParameterMap()  {
+		return parameterMap;
+	}
+
+	@Override
+	public String getParameter(String name)
+	{
+		Object value = parameterMap.get(name);
+		if (value==null) {
+			return null;
+		}
+		if (value instanceof String) {
+			return String.class.cast(value);
+		}
+		else if (value instanceof String[]) {
+		   String[] values=String[].class.cast(value);
+		   return values.length>0 ? values[0] : null;
+		}
+		else {
+			throw new IllegalArgumentException("Unexpected class: " + value.getClass().getName()+ " of parameter:"+name);
+		}
+	}
+
+	@Override
+	public Enumeration getParameterNames()
+	{
+		return Collections.enumeration(parameterMap.keySet());
+	}
+
+	@Override
+	public String[] getParameterValues(String name) {
+		Object value = parameterMap.get(name);
+		if (value==null) {
+			return null;
+		}
+		if (value instanceof String) {
+			return new String[] {String.class.cast(value)};
+		}
+		else if (value instanceof String[]) {
+			return String[].class.cast(value);
+		}
+		else {
+			throw new IllegalArgumentException("Unexpected class: " + value.getClass().getName()+ " of parameter:"+name);
 		}
 	}
 
