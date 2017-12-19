@@ -271,7 +271,11 @@ public abstract class AutoCompleteTextField<T> extends TextField<T>
 		super.onComponentTag(tag);
 
 		// disable browser's autocomplete
+		// ARENA
+        /*
+		// disable browser's autocomplete
 		tag.put("autocomplete", "off");
+		*/
 	}
 
 	/**
