@@ -725,9 +725,9 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.3.2</version>
 					<configuration>
-						<source>1.5</source>
-						<target>1.5</target>
-						<optimize>true</optimize>
+						<source>1.6</source>
+						<target>1.6</target>
+						<optimize>false</optimize>
 						<debug>true</debug>
 					</configuration>
 				</plugin>

@@ -128,13 +128,6 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper
 		}
 	}
 
-	private static HttpServletRequest getOriginalRequest(final HttpServletRequest request) {
-		HttpServletRequest originalRequest = request;
-		while (originalRequest instanceof HttpServletRequestWrapper && ((HttpServletRequestWrapper) originalRequest).getRequest() != null) {
-			originalRequest = (HttpServletRequest) ((HttpServletRequestWrapper) originalRequest).getRequest();
-		}
-		return originalRequest;
-	}
 
 	// Arena 4.0
 	private void fixContextPath() {
@@ -152,9 +145,12 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper
 
 	private void fixParameterMap(final HttpServletRequest request) {
 		if (isForm(request)) {
-			final HttpServletRequest originalRequest=getOriginalRequest(request);
-			Map parameterMap=new HashMap();
-			parameterMap.putAll(originalRequest.getParameterMap());
+			Map parameterMap = new HashMap();
+			HttpServletRequest currentRequest = request;
+			while (currentRequest instanceof HttpServletRequestWrapper && ((HttpServletRequestWrapper) currentRequest).getRequest() != null) {
+				currentRequest = (HttpServletRequest) ((HttpServletRequestWrapper) currentRequest).getRequest();
+				parameterMap.putAll(currentRequest.getParameterMap());
+			}
 			parameterMap.putAll(super.getParameterMap());
 			this.parameterMap=Collections.unmodifiableMap(parameterMap);
 		}
