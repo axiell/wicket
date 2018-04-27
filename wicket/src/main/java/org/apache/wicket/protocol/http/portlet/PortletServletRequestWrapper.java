@@ -131,34 +131,15 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper {
         }
     }
 
-    private static boolean isVisitNestedRequests(final HttpServletRequest request) {
-        return "get".equalsIgnoreCase(request.getMethod()) ||
-                ("post".equalsIgnoreCase(request.getMethod()) && "application/x-www-form-urlencoded".equalsIgnoreCase(request.getContentType()));
-    }
-
     private void fixParameterMap(final HttpServletRequest request) {
-        if (isVisitNestedRequests(request)) {
-            Map parameterMap = new HashMap();
-            HttpServletRequest currentRequest = request;
-            while (currentRequest instanceof HttpServletRequestWrapper && ((HttpServletRequestWrapper) currentRequest).getRequest() != null) {
-                currentRequest = (HttpServletRequest) ((HttpServletRequestWrapper) currentRequest).getRequest();
-                Iterator<Map.Entry> iterator=currentRequest.getParameterMap().entrySet().iterator();
-                while(iterator.hasNext()) {
-                    Map.Entry entry=iterator.next();
-                    if (isCopyableKey((String)entry.getKey())) {
-                        parameterMap.put(entry.getKey(),entry.getValue());
-                    }
-                }
-            }
-            parameterMap.putAll(super.getParameterMap());
-            this.parameterMap = Collections.unmodifiableMap(parameterMap);
-        } else {
-            parameterMap = super.getParameterMap();
+        Map parameterMap = new HashMap();
+        HttpServletRequest currentRequest = request;
+        while (currentRequest instanceof HttpServletRequestWrapper && ((HttpServletRequestWrapper) currentRequest).getRequest() != null) {
+            currentRequest = (HttpServletRequest) ((HttpServletRequestWrapper) currentRequest).getRequest();
+            parameterMap.putAll(currentRequest.getParameterMap());
         }
-    }
-
-    private static boolean isCopyableKey(final String key) {
-        return key!=null && !key.startsWith("p_p_") && !key.startsWith("p_l_") && !key.startsWith("p_v_");
+        parameterMap.putAll(super.getParameterMap());
+        this.parameterMap = Collections.unmodifiableMap(parameterMap);
     }
 
     @Override
