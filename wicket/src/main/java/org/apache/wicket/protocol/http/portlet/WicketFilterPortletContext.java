@@ -128,16 +128,17 @@ public class WicketFilterPortletContext
 		{
 			ServletContext context = config.getServletContext();
 			HttpServletRequest request = filterRequestContext.getRequest();
-			String pathInfo = request.getRequestURI().substring(
-				request.getContextPath().length() + filterPath.length());
-			String portletWindowId = decodePortletWindowId(pathInfo);
-			if (portletWindowId != null)
-			{
-				HttpSession proxiedSession = ServletPortletSessionProxy.createProxy(request,
-					portletWindowId);
-				pathInfo = stripWindowIdFromPathInfo(pathInfo);
-				filterRequestContext.setRequest(new PortletServletRequestWrapper(context, request,
-					proxiedSession, filterPath, pathInfo));
+			if (request.getRequestURI().startsWith(request.getContextPath())) {
+				String pathInfo = request.getRequestURI().substring(
+						request.getContextPath().length() + filterPath.length());
+				String portletWindowId = decodePortletWindowId(pathInfo);
+				if (portletWindowId != null) {
+					HttpSession proxiedSession = ServletPortletSessionProxy.createProxy(request,
+							portletWindowId);
+					pathInfo = stripWindowIdFromPathInfo(pathInfo);
+					filterRequestContext.setRequest(new PortletServletRequestWrapper(context, request,
+							proxiedSession, filterPath, pathInfo));
+				}
 			}
 		}
 		return inPortletContext;
