@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import com.sun.imageio.plugins.jpeg.JPEGImageWriter;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.WebResource;
@@ -38,12 +39,16 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.time.Time;
 
+/*
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
+*/
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 
 /**
  * Web page with 50 dynamically-created image resources.
- * 
+ *
  * @author almaw
  */
 public class ResourceTestPage extends WebPage
@@ -74,7 +79,12 @@ public class ResourceTestPage extends WebPage
 				gfx.fillRect(0, 0, 32, 32);
 				gfx.dispose();
 
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                JPEGImageWriter imageWriter = (JPEGImageWriter) ImageIO.getImageWritersBySuffix("jpeg").next();
+                imageWriter.setOutput(baos);
+
 				// Write it into a byte array as a JPEG.
+                /*
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
 				try
@@ -85,6 +95,7 @@ public class ResourceTestPage extends WebPage
 				{
 					throw new WicketRuntimeException(e);
 				}
+                */
 				final byte[] imageData = baos.toByteArray();
 
 				item.add(new Image("image", new WebResource()
