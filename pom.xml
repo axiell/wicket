@@ -26,7 +26,7 @@
 
 	<groupId>org.apache.wicket</groupId>
 	<artifactId>wicket-parent</artifactId>
-	<version>1.4.23b</version>
+	<version>1.4.23c</version>
 	<packaging>pom</packaging>
 	<name>Wicket Parent</name>
 	<description>Wicket is a Java-based open source component web application framework.</description>
@@ -51,7 +51,9 @@
 				<module>wicket-guice</module>
 				<module>wicket-jmx</module>
 				<module>wicket-objectssizeof-agent</module>
+				<!--
 				<module>wicket-examples</module>
+				-->
 				<module>archetypes/quickstart</module>
 			</modules>
 			<build>
@@ -113,7 +115,9 @@
 				<module>wicket-guice</module>
 				<module>wicket-jmx</module>
 				<module>wicket-objectssizeof-agent</module>
+				<!--
 				<module>wicket-examples</module>
+				-->
 				<module>archetypes/quickstart</module>
 			</modules>
 			<build>
@@ -176,7 +180,9 @@
 				<module>wicket-guice</module>
 				<module>wicket-jmx</module>
 				<module>wicket-objectssizeof-agent</module>
+				<!--
 				<module>wicket-examples</module>
+				-->
 				<module>archetypes/quickstart</module>
 			</modules>
 			<build>
@@ -246,7 +252,9 @@
 				<module>wicket-guice</module>
 				<module>wicket-jmx</module>
 				<module>wicket-objectssizeof-agent</module>
+				<!--
 				<module>wicket-examples</module>
+				-->
 				<module>archetypes/quickstart</module>
 				<module>testing/wicket-threadtest</module>
 			</modules>

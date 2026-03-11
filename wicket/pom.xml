@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>org.apache.wicket</groupId>
 		<artifactId>wicket-parent</artifactId>
-		<version>1.4.23b</version>
+		<version>1.4.23c</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -31,13 +31,13 @@
 	<packaging>jar</packaging>
 	<name>Wicket</name>
 	<description>
-		Wicket is a Java web application framework that takes simplicity, 
-		separation of concerns and ease of development to a whole new level. 
-		Wicket pages can be mocked up, previewed and later revised using 
-		standard WYSIWYG HTML design tools. Dynamic content processing and 
-		form handling is all handled in Java code using a first-class 
-		component model backed by POJO data beans that can easily be 
-		persisted using your favorite technology. 
+		Wicket is a Java web application framework that takes simplicity,
+		separation of concerns and ease of development to a whole new level.
+		Wicket pages can be mocked up, previewed and later revised using
+		standard WYSIWYG HTML design tools. Dynamic content processing and
+		form handling is all handled in Java code using a first-class
+		component model backed by POJO data beans that can easily be
+		persisted using your favorite technology.
 	</description>
 	<dependencies>
 		<dependency>
@@ -60,7 +60,7 @@
 				<configuration>
 					<licenseLocation>${basedir}/../../../common/lib/clover.license</licenseLocation>
 				</configuration>
-			</plugin>			
+			</plugin>
 		</plugins>
 	</build>
 </project>

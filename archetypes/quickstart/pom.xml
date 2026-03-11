@@ -3,10 +3,10 @@
   <parent>
 		<groupId>org.apache.wicket</groupId>
 		<artifactId>wicket-parent</artifactId>
-		<version>1.4.23b</version>
+		<version>1.4.23c</version>
 		<relativePath>../../pom.xml</relativePath>
   </parent>
-  
+
   <artifactId>wicket-archetype-quickstart</artifactId>
   <packaging>jar</packaging>
   <name>Wicket Quickstart Archetype</name>
@@ -22,5 +22,5 @@
 			</resource>
 		</resources>
 	</build>
-	
+
 </project>

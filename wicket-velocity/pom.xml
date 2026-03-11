@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>org.apache.wicket</groupId>
 		<artifactId>wicket-parent</artifactId>
-		<version>1.4.23b</version>
+		<version>1.4.23c</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -32,7 +32,7 @@
 
 	<name>Wicket Velocity</name>
 	<description>
-		Provides a specialized panel and some related utilities that enables users 
+		Provides a specialized panel and some related utilities that enables users
 		to work with Velocity and Wicket. Particularly useful for simple CMS like applications
 	</description>
 

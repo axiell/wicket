@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>org.apache.wicket</groupId>
 		<artifactId>wicket-parent</artifactId>
-		<version>1.4.23b</version>
+		<version>1.4.23c</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -32,8 +32,8 @@
 
 	<name>Wicket Development Utilities</name>
 	<description>
-		Wicket development utilities provide helpful features that 
-		are typically used during development only, but may be 
+		Wicket development utilities provide helpful features that
+		are typically used during development only, but may be
 		turned on for additional production debugging.
 	</description>
 

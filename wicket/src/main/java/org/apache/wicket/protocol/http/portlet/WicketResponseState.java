@@ -39,7 +39,7 @@ import org.apache.wicket.settings.IRequestCycleSettings;
 /**
  * Temporarily holds the current state of a Wicket response when invoked from WicketPortlet: buffer,
  * headers, state and the redirect location to be processed afterwards within WicketPortlet
- * 
+ *
  * @author Ate Douma
  */
 public class WicketResponseState
@@ -86,10 +86,10 @@ public class WicketResponseState
 
 	/**
 	 * FIXME javadoc
-	 * 
+	 *
 	 * Stores the effective wicket url which is used by {@link WicketPortlet} in the view phase to
 	 * request a render from wicket core.
-	 * 
+	 *
 	 * @see IRequestCycleSettings#REDIRECT_TO_RENDER
 	 * @see WicketFilterPortletHelper#initFilter
 	 */
@@ -164,7 +164,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#addCookie(javax.servlet.http.Cookie)
 	 */
 	public void addCookie(Cookie cookie)
@@ -181,7 +181,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#addDateHeader(java.lang.String, long)
 	 */
 	public void addDateHeader(String name, long date)
@@ -191,7 +191,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#addHeader(java.lang.String,
 	 * java.lang.String)
 	 */
@@ -205,7 +205,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#addIntHeader(java.lang.String, int)
 	 */
 	public void addIntHeader(String name, int value)
@@ -215,7 +215,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#containsHeader(java.lang.String)
 	 */
 	public boolean containsHeader(String name)
@@ -226,7 +226,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#sendError(int, java.lang.String)
 	 */
 	public void sendError(int errorCode, String errorMessage) throws IOException
@@ -239,7 +239,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#sendError(int)
 	 */
 	public void sendError(int errorCode) throws IOException
@@ -249,7 +249,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#sendRedirect(java.lang.String)
 	 */
 	public void sendRedirect(String redirectLocation) throws IOException
@@ -296,7 +296,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#setDateHeader(java.lang.String, long)
 	 */
 	public void setDateHeader(String name, long date)
@@ -306,7 +306,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#setHeader(java.lang.String,
 	 * java.lang.String)
 	 */
@@ -322,7 +322,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#setIntHeader(java.lang.String, int)
 	 */
 	public void setIntHeader(String name, int value)
@@ -332,7 +332,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#setStatus(int, java.lang.String)
 	 */
 	public void setStatus(int statusCode, String message)
@@ -342,7 +342,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServletResponseWrapper#setStatus(int)
 	 */
 	public void setStatus(int statusCode)
@@ -357,7 +357,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#flushBuffer()
 	 */
 	public void flushBuffer() throws IOException
@@ -370,7 +370,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#getBufferSize()
 	 */
 	public int getBufferSize()
@@ -380,7 +380,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#getCharacterEncoding()
 	 */
 	public String getCharacterEncoding()
@@ -390,7 +390,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#getContentType()
 	 */
 	public String getContentType()
@@ -400,7 +400,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#getLocale()
 	 */
 	public Locale getLocale()
@@ -410,7 +410,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#getOutputStream()
 	 */
 	public ServletOutputStream getOutputStream() throws IOException
@@ -451,7 +451,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#getWriter()
 	 */
 	public PrintWriter getWriter() throws IOException
@@ -477,7 +477,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#isCommitted()
 	 */
 	public boolean isCommitted()
@@ -487,7 +487,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#reset()
 	 */
 	public void reset()
@@ -507,7 +507,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#resetBuffer()
 	 */
 	public void resetBuffer()
@@ -533,7 +533,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#setBufferSize(int)
 	 */
 	public void setBufferSize(int size)
@@ -543,7 +543,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#setCharacterEncoding(java.lang.String)
 	 */
 	public void setCharacterEncoding(String charset)
@@ -557,7 +557,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#setContentLength(int)
 	 */
 	public void setContentLength(int len)
@@ -585,7 +585,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#setContentType(java.lang.String)
 	 */
 	public void setContentType(String type)
@@ -603,7 +603,7 @@ public class WicketResponseState
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.ServletResponseWrapper#setLocale(java.util.Locale)
 	 */
 	public void setLocale(Locale locale)
@@ -765,4 +765,21 @@ public class WicketResponseState
 			}
 		}
 	}
+
+	/**
+	 * Returns the first buffered value of the named response header, or {@code null} if no header
+	 * with that name has been set. Headers are buffered here by
+	 * {@link PortletServletResponseWrapper} until {@link #flush()} copies them to the portlet
+	 * response via {@link javax.portlet.MimeResponse#addProperty(String, String)}.
+	 *
+	 * @param name
+	 *            the header name (case-sensitive)
+	 * @return the first header value, or {@code null} if not set
+	 */
+	public String getHeader(String name)
+	{
+		ArrayList<String> headerList = getHeaderList(name, false);
+		return (headerList != null && !headerList.isEmpty()) ? headerList.get(0) : null;
+	}
+
 }
