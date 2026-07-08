@@ -1,0 +1,52 @@
+# Excluded modules
+wicket-examples/
+archetypes/
+testing/wicket-threadtest/
+licenses/
+
+# IDE / editor noise
+**/.settings/
+**/.idea/
+**/*.iml
+.ai/
+
+# Configurations
+**/*.xml
+**/*.properties
+**/*.yaml
+**/*.yml
+**/*.json
+**/*.conf
+**/*.cfg
+**/*.ini
+**/*.env
+
+# Documentation
+**/*.md
+**/*.txt
+**/*.rst
+**/*.adoc
+
+# Images
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.svg
+**/*.ico
+**/*.webp
+**/*.bmp
+
+# Build / generated output
+**/target/
+**/build/
+**/*.class
+**/*.jar
+**/*.war
+
+# Keys / certs
+**/*.pfx
+**/*.p12
+**/*.pem
+**/*.crt
+**/*.key
